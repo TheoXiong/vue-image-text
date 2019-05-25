@@ -10,7 +10,8 @@
               'is-disabled': disabled,
               'is-loading': loading,
               'is-circle': circle,
-              'is-activated': activated
+              'is-activated': activated,
+              'is-light': light
             }
   ]">
     <i :class="icon" v-if="icon"></i>
@@ -31,7 +32,8 @@ export default {
     loading: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     circle: { type: Boolean, default: false },
-    activated: { type: Boolean, default: false }
+    activated: { type: Boolean, default: false },
+    light: { type: Boolean, default: false }
   },
   methods: {
     handleClick (event) {
@@ -89,58 +91,6 @@ export default {
     outline:0;
 }
 
-/* primary button style*/
-.v-button.v-button--primary{
-    color:#fff;
-    background-color:rgb(90, 100, 170);
-    border-color:rgb(90, 100, 170);
-}
-.v-button--primary.is-disabled,
-.v-button--primary.is-disabled:active,
-.v-button--primary.is-disabled:focus,
-.v-button--primary.is-disabled:hover{
-    color:#fff;
-    cursor:not-allowed;
-    background-color:rgba(90, 100, 170, 0.7);
-    border-color:rgba(90, 100, 170, 0.7);
-}
-.v-button--primary:hover{
-    background:rgba(90, 100, 170, 0.7);
-    border-color:rgba(90, 100, 170, 0.7);
-    color:#fff;
-}
-.v-button--primary:active{
-    background:rgb(90, 100, 170);
-    border-color:rgb(90, 100, 170);
-    color:#fff;
-}
-
-/* info button style*/
-.v-button.v-button--info{
-    color:#575F96;
-    background-color:#d9d9dd;
-    border-color:#d9d9dd;
-}
-.v-button--info.is-disabled,
-.v-button--info.is-disabled:active,
-.v-button--info.is-disabled:focus,
-.v-button--info.is-disabled:hover{
-    color:#575F96;
-    cursor:not-allowed;
-    background-color:#e4e4ee;
-    border-color:#e4e4ee;
-}
-.v-button--info:hover{
-    background:#e4e4ee;
-    border-color:#e4e4ee;
-    color:#575F96;
-}
-.v-button--info:active{
-    background:#d9d9dd;
-    border-color:#d9d9dd;
-    color:#575F96;
-}
-
 /* text button style*/
 .v-button.v-button--text{
     color:#606266;
@@ -149,6 +99,13 @@ export default {
     outline: 0;
     border-radius: 2;
 }
+.v-button--text:hover{
+    background:#e9e9f1;
+    border: none;
+    outline: 0;
+    border-radius: 2;
+}
+
 .v-button--text.is-disabled,
 .v-button--text.is-disabled:active,
 .v-button--text.is-disabled:focus,
@@ -162,11 +119,18 @@ export default {
     border-radius: 2;
 }
 
-.v-button--text:hover{
-    background:#e9e9f1;
-    border: none;
-    outline: 0;
-    border-radius: 2;
+.v-button--text.is-light{
+  color:rgba(255, 255, 255, 0.8);
+  background-color:transparent;
+  border: none;
+  outline: 0;
+  border-radius: 2;
+}
+.v-button--text.is-light:hover{
+  background-color: rgba(51, 51, 51, 0.8);
+  border: none;
+  outline: 0;
+  border-radius: 2;
 }
 
 .v-button--text.is-activated,
@@ -174,6 +138,17 @@ export default {
 .v-button--text.is-activated:focus,
 .v-button--text.is-activated:hover{
     background:#e9e9f1;
+    border: none;
+    outline: 0;
+    border-radius: 2;
+    font-weight: 600;
+}
+
+.v-button--text.is-light.is-activated,
+.v-button--text.is-light.is-activated:active,
+.v-button--text.is-light.is-activated:focus,
+.v-button--text.is-light.is-activated:hover{
+    background:rgba(51, 51, 51, 0.8);
     border: none;
     outline: 0;
     border-radius: 2;

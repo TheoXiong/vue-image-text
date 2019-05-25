@@ -1,34 +1,64 @@
 <template>
-  <div class="imgae-text" ref="wrapper" @dragstart="dragStart" @drag="drag" @dragend="dragEnd">
-    <div class="tool-box">
-      <div class="tool-box-add">
-        <vue-button @click="addText" type="text" :disabled="isExceed"><i class="iconfont icontext"></i></vue-button>
+  <div
+    class="imgae-text"
+    ref="wrapper"
+    @dragstart="dragStart"
+    @drag="drag"
+    @dragend="dragEnd"
+    :class="{'imgae-text-light':effect==='light', 'imgae-text-dark':effect==='dark'}"
+  >
+    <div class="tool-box" :class="{'tool-box-light':effect==='light', 'tool-box-dark':effect==='dark'}">
+      <div class="tool-box-add" :class="{'divider-r-light':effect==='light', 'divider-r-dark':effect==='dark'}">
+        <vue-button @click="addText" type="text" :disabled="isExceed" :light="effect==='dark'"><i class="iconfont icontext"></i></vue-button>
       </div>
       <div class="tool-box-bold tool-box-style">
-        <span class="tool-box-tip">Bold</span>
-        <vue-button @click="style.isBold = !style.isBold" :activated="style.isBold" type="text"><i class="iconfont iconbold tool-box-icon"></i></vue-button>
+        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Bold</span>
+        <vue-button @click="style.isBold = !style.isBold" :activated="style.isBold" :light="effect==='dark'" type="text" class="bt-style">
+          <i class="iconfont iconbold tool-box-icon"></i>
+        </vue-button>
       </div>
       <div class="tool-box-italic tool-box-style">
-        <span class="tool-box-tip">Italic</span>
-        <vue-button @click="style.isItalic = !style.isItalic" :activated="style.isItalic" type="text"><i class="iconfont iconitalic tool-box-icon"></i></vue-button>
-      </div>
-      <div class="tool-box-size tool-box-style">
-        <span class="tool-box-tip">Font Size</span>
-        <div class="tool-box-range">
-          <input type="range" :min="minFontSize" :max="maxFontSize" v-model="style.fontSize" class="tool-box-range-input">
-          <span class="tool-box-range-value">{{ style.fontSize }}</span>
-        </div>
+        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Italic</span>
+        <vue-button @click="style.isItalic = !style.isItalic" :activated="style.isItalic" :light="effect==='dark'" type="text" class="bt-style">
+          <i class="iconfont iconitalic tool-box-icon"></i>
+        </vue-button>
       </div>
       <div class="tool-box-color tool-box-style">
-        <span class="tool-box-tip">Font Color</span>
+        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Color</span>
         <div class="tool-box-select-color">
-          <input type="color" v-model="style.color" class="select-color-input">
-          <span class="select-color-value">{{ style.color }}</span>
+          <el-color-picker v-model="style.color" show-alpha :predefine="colors" size="mini" class="v-color-picker"></el-color-picker>
         </div>
       </div>
-      <div class="tool-box-clear tool-box-operate">
-        <span class="tool-box-tip">Clear</span>
-        <vue-button @click="clearText" type="text"><i class="iconfont icondelete tool-box-icon"></i></vue-button>
+      <div class="tool-box-size tool-box-style">
+        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Size</span>
+        <div class="tool-box-range">
+          <el-slider v-model="style.fontSize" :min="minFontSize" :max="maxFontSize" class="v-slider-wrap"></el-slider>
+          <!-- <span class="tool-box-range-value" :class="{'value-light':effect==='light', 'value-dark':effect==='dark'}">{{ style.fontSize }}</span> -->
+        </div>
+      </div>
+      <div class="tool-box-family tool-box-style">
+        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Family</span>
+        <div class="tool-box-select-family">
+          <el-select v-model="style.fontFamily" placeholder="Select" size="mini" class="v-family-select">
+            <el-option
+              v-for="family in familys"
+              :key="family.value"
+              :label="family.label"
+              :value="family.value"
+              :style="{
+                fontSize: '13px',
+                fontFamily: family.value + ', Arial',
+                height: '24px',
+                lineHeight: '24px'
+              }"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="tool-box-clear tool-box-operate" :class="{'divider-l-light':effect==='light', 'divider-l-dark':effect==='dark'}">
+        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Clear</span>
+        <vue-button @click="clearText" :light="effect==='dark'" type="text"><i class="iconfont icondelete tool-box-clear-icon"></i></vue-button>
       </div>
     </div>
     <canvas id="canvas" @click="onClickCanvas($event)"></canvas>
@@ -60,6 +90,7 @@
             fontSize: item.fontSize + 'px',
             fontWeight: item.isBold ? '600' : '400',
             fontStyle: item.isItalic ? 'italic' : 'normal',
+            fontFamily: item.fontFamily + ', Arial'
           }"
           class="text-input"
           ref="textInput"
@@ -73,17 +104,19 @@
 import VueButton from './VueButton.vue'
 import '../assets/iconfont/iconfont.css'
 import '../assets/css/transition.css'
-
-const VALID_ANIMATION = ['top-top', 'top-bottom', 'left-left', 'left-right', 'right-right', 'big-big', 'big-small', 'small-big', 'small-small', 'none']
+import { VALID_THEME, VALID_ANIMATION, COLORS, FONT_FAMILY } from '../utils/consts.js'
 
 export default {
   name: 'VueImageText',
   data () {
     return {
+      colors: COLORS,
+      familys: FONT_FAMILY,
       wrapPrefix: 'wrap-',
       wrapper: null,
       canvas: null,
       ctx: null,
+      loading: false,
       imageSrc: '',
       isDraging: false,
       mouseX: 0,
@@ -99,11 +132,17 @@ export default {
         isBold: false,
         isItalic: false,
         fontSize: 14,
-        color: '#575F96'
+        fontFamily: 'Arial',
+        color: '#606266'
       }
     }
   },
   props: {
+    theme: {
+      type: String,
+      default: 'light',
+      validator: value => { return VALID_THEME.includes(value) }
+    },
     defaultText: { type: String, default: 'Text' },
     minFontSize: {
       type: Number,
@@ -116,7 +155,7 @@ export default {
       validator: value => { return (value >= 24) && (value <= 72) && ((value | 0) === value) }
     },
     defaultFontSize: { type: Number, default: 20 },
-    defaultTextColor: { type: String, default: '#731ed0' },
+    defaultTextColor: { type: String, default: '#606266' },
     maxTextNum: { type: Number, default: 50 },
     maxCanvasHeight: { type: Number, default: 5000 },
     followImageWidth: { type: Boolean, default: true },
@@ -138,6 +177,9 @@ export default {
       } else {
         return 'none'
       }
+    },
+    effect () {
+      return VALID_THEME.includes(this.theme) ? this.theme : VALID_THEME[0]
     }
   },
   watch: {
@@ -155,15 +197,19 @@ export default {
           this.isExceed = false
         }
       }
+    },
+    effect: {
+      handler (value) {
+        value ? this.customizeStyle() : ''
+      }
     }
   },
   mounted () {
-    this.wrapper = this.$refs.wrapper || document.querySelector('.imgae-text') || {}
-    this.canvas = document.getElementById('canvas')
+    this.initTextStyle()
+    this.customizeStyle()
+    this.initCanvas()
     this.resetCanvasSize()
-    this.ctx = this.canvas.getContext('2d')
     this.bindDragEvent()
-    this.initStyle()
   },
   beforeDestroy () {
     this.destroy()
@@ -178,10 +224,114 @@ export default {
       this.itemY = 0
       this.textId = 0
       this.texts.splice(0, this.texts.length)
+      this.imageSrc = ''
     },
-    initStyle () {
+    initTextStyle () {
       this.style.fontSize = this.defaultFontSize
       this.style.color = this.defaultTextColor
+    },
+    getSliderColor () {
+      if (this.effect === 'light') {
+        return {
+          runway: 'rgba(200,200,200,0.8)',
+          bar: 'rgba(51,51,51,0.6)',
+          button: {
+            backgroundColor: 'rgb(240,240,240)',
+            borderColor: 'rgba(51,51,51,0.7)'
+          }
+        }
+      } else if (this.effect === 'dark') {
+        return {
+          runway: 'rgba(51,51,51,0.9)',
+          bar: 'rgba(255, 255, 255, 0.7)',
+          button: {
+            backgroundColor: 'rgb(51,51,51)',
+            borderColor: 'rgba(255, 255, 255, 0.8)'
+          }
+        }
+      } else {
+        return null
+      }
+    },
+    getPickerColor () {
+      if (this.effect === 'light') {
+        return {
+          trigger: '#e6e6e6'
+        }
+      } else if (this.effect === 'dark') {
+        return {
+          trigger: 'rgba(200, 200, 200, 0.4)'
+        }
+      } else {
+        return null
+      }
+    },
+    getFamilyColor () {
+      if (this.effect === 'light') {
+        return {
+          input: {
+            backgroundColor: 'rgba(200, 200, 200, 0.4)',
+            color: '#606266'
+          }
+        }
+      } else if (this.effect === 'dark') {
+        return {
+          input: {
+            backgroundColor: 'rgba(51,51,51,0.7)',
+            color: 'rgba(255, 255, 255, 0.8)'
+          }
+        }
+      } else {
+        return null
+      }
+    },
+    customizeStyle () {
+      let sliders = document.getElementsByClassName('v-slider-wrap')
+      let sliderColor = this.getSliderColor()
+      if (sliders && sliders.length > 0 && sliderColor) {
+        for (let i = 0; i < sliders.length; i++) {
+          let runways = sliders[i].getElementsByClassName('el-slider__runway')
+          let sliderBars = sliders[i].getElementsByClassName('el-slider__bar')
+          let sliderButtons = sliders[i].getElementsByClassName('el-slider__button')
+          if (!(runways && sliderBars && sliderButtons)) return
+          for (let j = 0; j < runways.length; j++) {
+            runways[j].style.backgroundColor = sliderColor.runway
+            sliderBars[j].style.backgroundColor = sliderColor.bar
+            sliderButtons[j].style.borderColor = sliderColor.button.borderColor
+            sliderButtons[j].style.backgroundColor = sliderColor.button.backgroundColor
+          }
+        }
+      }
+
+      let pickers = document.getElementsByClassName('v-color-picker')
+      let pickerColor = this.getPickerColor()
+      if (pickers && pickers.length > 0 && pickerColor) {
+        for (let i = 0; i < pickers.length; i++) {
+          let triggers = pickers[i].getElementsByClassName('el-color-picker__trigger')
+          if (!(triggers && triggers.length > 0)) return
+          for (let j = 0; j < triggers.length; j++) {
+            triggers[j].style.borderColor = pickerColor.trigger
+          }
+        }
+      }
+
+      let selectors = document.getElementsByClassName('v-family-select')
+      let familyColor = this.getFamilyColor()
+      if (selectors && selectors.length > 0 && familyColor) {
+        for (let i = 0; i < selectors.length; i++) {
+          let inputs = selectors[i].getElementsByClassName('el-input__inner')
+          if (!(inputs && inputs.length > 0)) return
+          for (let j = 0; j < inputs.length; j++) {
+            inputs[j].style.backgroundColor = familyColor.input.backgroundColor
+            inputs[j].style.color = familyColor.input.color
+          }
+        }
+      }
+    },
+    initCanvas () {
+      this.wrapper = this.$refs.wrapper || document.querySelector('.imgae-text') || {}
+      this.canvas = document.getElementById('canvas')
+      this.ctx = this.canvas.getContext('2d')
     },
     bindDragEvent () {
       this.$refs.wrapper.ondragenter = (e) => {
@@ -226,22 +376,6 @@ export default {
       }
       return adjustedSize
     },
-    showImage (src) {
-      if (!(typeof src === 'string' && src)) throw new Error('[ showImage ] Invalid src.')
-      this.imageSrc = ''
-      this.resetCanvasSize()
-      let image = new Image()
-      image.onload = () => {
-        let adjustedSize = this.adjustCanvasSize(image.width, image.height)
-        this.fillBackground()
-        let blankSpace = this.canvas.width - adjustedSize.width - this.paddingLeft - this.paddingRight
-        this.ctx.drawImage(image, 0, 0, image.width, image.height, (this.paddingLeft + blankSpace) / 2, this.paddingTop, adjustedSize.width, adjustedSize.height)
-        this.activeArea.w = this.wrapper.offsetWidth
-        this.activeArea.h = this.wrapper.offsetHeight
-        this.imageSrc = src
-      }
-      image.src = src
-    },
     addText () {
       let id = this.textId++
       let textItem = {
@@ -272,7 +406,8 @@ export default {
         if (item.value && typeof item.x === 'number' && typeof item.y === 'number' && item.x >= 0 && item.y >= 0) {
           let fontStyle = item.isItalic ? 'italic' : 'normal'
           let fontWeight = item.isBold ? '600' : '400'
-          this.ctx.font = `${fontStyle} ${fontWeight} ${item.fontSize}px Arial, Helvetica, sans-serif`
+          let fontFamily = item.fontFamily + ', Arial'
+          this.ctx.font = `${fontStyle} ${fontWeight} ${item.fontSize}px ${fontFamily}`
           this.ctx.fillStyle = item.color
           this.ctx.textBaseline = 'top'
           this.ctx.fillText(item.value, item.x, item.y)
@@ -282,11 +417,6 @@ export default {
     fillBackground () {
       this.ctx.fillStyle = this.fillColor || '#ffffff'
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
-    },
-    save (type, cb = () => {}) {
-      this.drawText()
-      let imgBase64 = this.canvas.toDataURL(`image/${type}`, 1)
-      cb(imgBase64)
     },
     dragStart (e) {
       e.dataTransfer.setData('text', '')
@@ -357,7 +487,8 @@ export default {
       if (textItem.value) {
         let fontStyle = textItem.isItalic ? 'italic' : 'normal'
         let fontWeight = textItem.isBold ? '600' : '400'
-        this.ctx.font = `${fontStyle} ${fontWeight} ${textItem.fontSize}px Arial, Helvetica, sans-serif`
+        let fontFamily = textItem.fontFamily + ', Arial'
+        this.ctx.font = `${fontStyle} ${fontWeight} ${textItem.fontSize}px ${fontFamily}`
         let size = this.ctx.measureText(textItem.value)
         textInput.style.width = size.width + 14 + 'px'
       } else {
@@ -407,6 +538,51 @@ export default {
         Object.assign(textItem, style)
         this.updateTextArea(textInput, textItem)
       }
+    },
+    show (src) {
+      return new Promise((resolve, reject) => {
+        if (!(typeof src === 'string' && src)) return reject(new Error('Invalid param.'))
+        if (this.loading) return reject(new Error('Loading in progress.'))
+        this.loading = true
+        this.imageSrc = ''
+        this.resetCanvasSize()
+        let image = new Image()
+        image.onload = () => {
+          let adjustedSize = this.adjustCanvasSize(image.width, image.height)
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+          this.fillBackground()
+          let blankSpace = this.canvas.width - adjustedSize.width - this.paddingLeft - this.paddingRight
+          this.ctx.drawImage(image, 0, 0, image.width, image.height, (this.paddingLeft + blankSpace) / 2, this.paddingTop, adjustedSize.width, adjustedSize.height)
+          this.activeArea.w = this.wrapper.offsetWidth
+          this.activeArea.h = this.wrapper.offsetHeight
+          this.imageSrc = src
+          this.$nextTick(() => {
+            this.loading = false
+            resolve()
+          })
+        }
+        image.src = src
+      })
+    },
+    getDataURL (type) {
+      if (!(this.canvas && this.ctx)) throw new Error('The canvas is invalid.')
+      this.drawText()
+      return this.canvas.toDataURL(`image/${type}`, 1)
+    },
+    getCanvas () {
+      return this.canvas
+    },
+    rerender (keepText = false) {
+      return new Promise((resolve, reject) => {
+        if (this.loading) return reject(new Error('Loading in progress.'))
+        if (!(this.canvas && this.ctx && this.imageSrc)) return reject(new Error('Not initialized yet.'))
+        this.show(this.imageSrc)
+          .then(() => {
+            keepText ? '' : this.clearText()
+            return resolve()
+          })
+          .catch(err => { return reject(err) })
+      })
     }
   },
   components: { VueButton }
@@ -417,12 +593,18 @@ export default {
 .imgae-text{
   position: relative;
   width: 100%;
-  min-width: 100px;
+  min-width: 600px;
   box-sizing: border-box;
   border-radius: 2px;
-  border: 1px solid rgba(0,0,0,0.2);
   overflow: hidden;
 }
+.imgae-text-light{
+  border: 1px solid rgba(0,0,0,0.2);
+}
+.imgae-text-dark{
+  border: 1px solid rgba(51,51,51,0.7);
+}
+
 #canvas{
   box-sizing: border-box;
   display: block;
@@ -460,23 +642,34 @@ export default {
   outline: none;
   -webkit-user-select: none;
   user-select: none;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 .tool-box{
   margin-bottom: 6px;
   padding: 0 16px;
   height: 64px;
-  background-color: rgba(200, 200, 200, 0.2);
-  border-bottom: 1px solid rgba(96, 98, 102, 0.07);
   display: flex;
   align-items: center;
+  border-bottom: 1px solid rgba(96, 98, 102, 0.07);
 }
+.tool-box-light{
+  background-color: rgba(200, 200, 200, 0.2);
+}
+.tool-box-dark{
+  background-color: rgba(51, 51, 51, 0.9);
+}
+
 .tool-box-add{
   padding: 5px 16px 5px 0px;
   margin-right: 16px;
+}
+.divider-r-light{
   border-right: 1px solid rgba(96, 98, 102, 0.3);
 }
+.divider-r-dark{
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .tool-box-add .icontext{
   font-size: 20px;
   font-weight: 600;
@@ -488,37 +681,99 @@ export default {
   align-items: center;
 }
 .tool-box-tip{
-  color: #909399;
   font-size: 11px;
+  margin-bottom: 2px;
   cursor: default;
   -webkit-user-select: none;
   user-select: none;
 }
-.tool-box .tool-box-icon{
-  font-size: 18px;
+.tip-light{
+  color: #909399;
 }
-.tool-box-range, .tool-box-select-color{
+.tip-dark{
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tool-box .tool-box-icon{
+  font-size: 16px;
+}
+.tool-box-range, .tool-box-select-color,
+.tool-box-family .tool-box-select-family{
   display: flex;
   align-items: center;
   height: 30px;
-  padding: 3px 12px;
+  padding: 0px 12px;
 }
-.tool-box-range-input{
+.v-slider-wrap{
   width: 100px;
-  height: 18px;
+  height: 30px;
 }
 .tool-box-range-value, .select-color-value{
-  margin-left: 4px;
+  margin-left: 10px;
   padding: 4px;
   font-size: 12px;
-  background-color: #e5e5e5;
   border-radius: 2px;
+}
+.value-light{
+  color: #606266;
+  background-color: #e5e5e5;
+}
+.value-dark{
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(51, 51, 51, 0.8);
 }
 
 .tool-box-clear{
-  margin-left: 8px;
+  margin-left: 10px;
   padding-left: 14px;
+}
+.divider-l-light{
   border-left: 1px solid rgba(96, 98, 102, 0.3);
+}
+.divider-l-dark{
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+.tool-box-clear .tool-box-clear-icon{
+  font-size: 18px;
+}
+
+.tool-box .bt-style{
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+</style>
+
+<style>
+.tool-box-range .el-slider__runway{
+  margin: 12px 0px;
+}
+
+.tool-box-range .el-slider__button-wrapper{
+  top: -12px;
+  height: 30px;
+  width: 30px;
+}
+
+.el-button--mini.el-color-dropdown__link-btn{
+  display: none !important;
+}
+
+.tool-box-select-family .el-input__inner{
+  width: 108px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  padding-left: 10px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  border-color: rgba(160,160,160,0.9) !important;
+}
+.tool-box-select-family .el-input.is-focus .el-input__inner,
+.tool-box-select-family .el-input__inner:focus{
+  border-color: rgba(120,120,120,0.9) !important;
+}
+.tool-box-select-family .el-input__icon{
+  line-height: 24px !important;
 }
 
 </style>

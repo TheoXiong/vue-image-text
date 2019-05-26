@@ -105,6 +105,12 @@ import VueButton from './VueButton.vue'
 import '../assets/iconfont/iconfont.css'
 import '../assets/css/transition.css'
 import { VALID_THEME, VALID_ANIMATION, COLORS, FONT_FAMILY } from '../utils/consts.js'
+import Vue from 'vue'
+import { ColorPicker, Slider, Select } from 'element-ui'
+
+Vue.use(ColorPicker)
+Vue.use(Slider)
+Vue.use(Select)
 
 export default {
   name: 'VueImageText',

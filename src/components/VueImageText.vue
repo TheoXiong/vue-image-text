@@ -7,60 +7,62 @@
     @dragend="dragEnd"
     :class="{'imgae-text-light':effect==='light', 'imgae-text-dark':effect==='dark'}"
   >
-    <div class="tool-box" :class="{'tool-box-light':effect==='light', 'tool-box-dark':effect==='dark'}">
-      <div class="tool-box-add" :class="{'divider-r-light':effect==='light', 'divider-r-dark':effect==='dark'}">
-        <vue-button @click="addText" type="text" :disabled="isExceed" :light="effect==='dark'"><i class="iconfont icontext"></i></vue-button>
-      </div>
-      <div class="tool-box-bold tool-box-style">
-        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Bold</span>
-        <vue-button @click="style.isBold = !style.isBold" :activated="style.isBold" :light="effect==='dark'" type="text" class="bt-style">
-          <i class="iconfont iconbold tool-box-icon"></i>
-        </vue-button>
-      </div>
-      <div class="tool-box-italic tool-box-style">
-        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Italic</span>
-        <vue-button @click="style.isItalic = !style.isItalic" :activated="style.isItalic" :light="effect==='dark'" type="text" class="bt-style">
-          <i class="iconfont iconitalic tool-box-icon"></i>
-        </vue-button>
-      </div>
-      <div class="tool-box-color tool-box-style">
-        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Color</span>
-        <div class="tool-box-select-color">
-          <el-color-picker v-model="style.color" show-alpha :predefine="colors" size="mini" class="v-color-picker"></el-color-picker>
+    <transition>
+      <div v-if="toolbar" class="tool-box" :class="{'tool-box-light':effect==='light', 'tool-box-dark':effect==='dark'}">
+        <div class="tool-box-add" :class="{'divider-r-light':effect==='light', 'divider-r-dark':effect==='dark'}">
+          <vue-button @click="addText" type="text" :disabled="isExceed" :light="effect==='dark'"><i class="iconfont icontext"></i></vue-button>
         </div>
-      </div>
-      <div class="tool-box-size tool-box-style">
-        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Size</span>
-        <div class="tool-box-range">
-          <el-slider v-model="style.fontSize" :min="minFontSize" :max="maxFontSize" class="v-slider-wrap"></el-slider>
+        <div class="tool-box-bold tool-box-style">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Bold</span>
+          <vue-button @click="style.isBold = !style.isBold" :activated="style.isBold" :light="effect==='dark'" type="text" class="bt-style">
+            <i class="iconfont iconbold tool-box-icon"></i>
+          </vue-button>
+        </div>
+        <div class="tool-box-italic tool-box-style">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Italic</span>
+          <vue-button @click="style.isItalic = !style.isItalic" :activated="style.isItalic" :light="effect==='dark'" type="text" class="bt-style">
+            <i class="iconfont iconitalic tool-box-icon"></i>
+          </vue-button>
+        </div>
+        <div class="tool-box-color tool-box-style">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Color</span>
+          <div class="tool-box-select-color">
+            <el-color-picker v-model="style.color" show-alpha :predefine="colors" size="mini" class="v-color-picker"></el-color-picker>
+          </div>
+        </div>
+        <div class="tool-box-size tool-box-style">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Size</span>
+          <div class="tool-box-range">
+            <el-slider v-model="style.fontSize" :min="minFontSize" :max="maxFontSize" class="v-slider-wrap"></el-slider>
           <!-- <span class="tool-box-range-value" :class="{'value-light':effect==='light', 'value-dark':effect==='dark'}">{{ style.fontSize }}</span> -->
+          </div>
+        </div>
+        <div class="tool-box-family tool-box-style">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Family</span>
+          <div class="tool-box-select-family">
+            <el-select v-model="style.fontFamily" placeholder="Select" size="mini" class="v-family-select">
+              <el-option
+                v-for="family in familys"
+                :key="family.value"
+                :label="family.label"
+                :value="family.value"
+                :style="{
+                  fontSize: '13px',
+                  fontFamily: family.value + ', Arial',
+                  height: '24px',
+                  lineHeight: '24px'
+                }"
+              >
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="tool-box-clear tool-box-operate" :class="{'divider-l-light':effect==='light', 'divider-l-dark':effect==='dark'}">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Clear</span>
+          <vue-button @click="clearText" :light="effect==='dark'" type="text"><i class="iconfont icondelete tool-box-clear-icon"></i></vue-button>
         </div>
       </div>
-      <div class="tool-box-family tool-box-style">
-        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Family</span>
-        <div class="tool-box-select-family">
-          <el-select v-model="style.fontFamily" placeholder="Select" size="mini" class="v-family-select">
-            <el-option
-              v-for="family in familys"
-              :key="family.value"
-              :label="family.label"
-              :value="family.value"
-              :style="{
-                fontSize: '13px',
-                fontFamily: family.value + ', Arial',
-                height: '24px',
-                lineHeight: '24px'
-              }"
-            >
-            </el-option>
-          </el-select>
-        </div>
-      </div>
-      <div class="tool-box-clear tool-box-operate" :class="{'divider-l-light':effect==='light', 'divider-l-dark':effect==='dark'}">
-        <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Clear</span>
-        <vue-button @click="clearText" :light="effect==='dark'" type="text"><i class="iconfont icondelete tool-box-clear-icon"></i></vue-button>
-      </div>
-    </div>
+    </transition>
     <canvas id="canvas" @click="onClickCanvas($event)"></canvas>
     <transition-group :name="transitionName">
       <div
@@ -149,6 +151,7 @@ export default {
       default: 'light',
       validator: value => { return VALID_THEME.includes(value) }
     },
+    toolbar: { type: Boolean, default: true },
     defaultText: { type: String, default: 'Text' },
     minFontSize: {
       type: Number,
@@ -166,10 +169,10 @@ export default {
     maxCanvasHeight: { type: Number, default: 5000 },
     followImageWidth: { type: Boolean, default: true },
     fillColor: { type: String, default: '#ffffff' },
-    paddingLeft: { type: Number, default: 10, validator: value => { return value > 0 } },
-    paddingRight: { type: Number, default: 10, validator: value => { return value > 0 } },
-    paddingTop: { type: Number, default: 10, validator: value => { return value > 0 } },
-    paddingBottom: { type: Number, default: 10, validator: value => { return value > 0 } },
+    paddingLeft: { type: Number, default: 0, validator: value => { return value >= 0 } },
+    paddingRight: { type: Number, default: 0, validator: value => { return value >= 0 } },
+    paddingTop: { type: Number, default: 0, validator: value => { return value >= 0 } },
+    paddingBottom: { type: Number, default: 0, validator: value => { return value >= 0 } },
     animation: {
       type: String,
       default: 'big-small',
@@ -382,7 +385,18 @@ export default {
       }
       return adjustedSize
     },
-    addText () {
+    mergeOptions (textItem, options) {
+      if (!(options && typeof options === 'object')) return
+      textItem.value = typeof options.value === 'string' ? options.value : textItem.value
+      textItem.x = typeof options.x === 'number' ? options.x : textItem.x
+      textItem.y = typeof options.y === 'number' ? options.y : textItem.y
+      textItem.isBold = typeof options.isBold === 'boolean' ? options.isBold : textItem.isBold
+      textItem.isItalic = typeof options.isItalic === 'boolean' ? options.isItalic : textItem.isItalic
+      textItem.fontSize = typeof options.fontSize === 'number' ? options.fontSize : textItem.fontSize
+      textItem.fontFamily = typeof options.fontFamily === 'string' ? options.fontFamily : textItem.fontFamily
+      textItem.color = typeof options.color === 'string' ? options.color : textItem.color
+    },
+    addText (options) {
       let id = this.textId++
       let textItem = {
         key: `text-input-${id}`,
@@ -393,6 +407,7 @@ export default {
         y: 50,
         ...this.style
       }
+      this.mergeOptions(textItem, options)
       this.texts.push(textItem)
       setTimeout(() => {
         let textInput = this.findInput(textItem.key)
@@ -444,7 +459,7 @@ export default {
       if (textItem) {
         let distance = (this.wrapper.offsetWidth - this.canvas.width) / 2
         textItem.x = e.target.offsetLeft - distance
-        textItem.y = e.target.offsetTop - 70
+        textItem.y = e.target.offsetTop - 64
       }
     },
     refreshPosition (e) {
@@ -461,8 +476,8 @@ export default {
       } else if (offsetLeft > (this.activeArea.w - e.target.offsetWidth)) {
         offsetLeft = this.activeArea.w - e.target.offsetWidth
       }
-      if (offsetTop < 70) {
-        offsetTop = 70
+      if (offsetTop < 64) {
+        offsetTop = 64
       } else if (offsetTop > (this.activeArea.h - e.target.offsetHeight)) {
         offsetTop = this.activeArea.h - e.target.offsetHeight
       }
@@ -651,7 +666,6 @@ export default {
 }
 
 .tool-box{
-  margin-bottom: 6px;
   padding: 0 16px;
   height: 64px;
   display: flex;

@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     onClick (item) {
-      this.$emit('click', item.key, item.name)
+      this.$emit('click', item)
     }
   }
 }
@@ -63,12 +63,12 @@ export default {
   -webkit-user-drag: none;
 }
 .is-not-overbanner{
-  background-color: rgba(36, 40, 54, 0.8);
+  background-color: rgba(68, 209, 209, 0.75);
 } 
 
 .nav-menu-wrap{
   height: 100%;
-  width: 1180px;
+  width: 1320px;
 }
 
 .nav-logo-img{
@@ -82,12 +82,12 @@ export default {
   font-weight: 600;
 }
 .nav-content-item{
-  margin: 0 16px;
-  font-size: 13px;
+  margin: 0 12px;
+  font-size: 14px;
   color: #fff;
   cursor: pointer;
 }
 .nav-content-item:hover{
-  color: #a9a9a9;
+  color: #e0d5d5;
 }
 </style>

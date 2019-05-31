@@ -9,6 +9,8 @@ import Home from '@/views/Home.vue'
 
 export default {
   name: 'App',
+  methods: {
+  },
   components: { Home } 
 }
 </script>
@@ -19,7 +21,6 @@ export default {
 
 <style>
 html {
-  height: 100%;
   margin: 0;
   padding: 0;
 }
@@ -30,8 +31,15 @@ body {
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
   color: #232321;
   min-width: 1200px;
-  overflow-x: auto;
   background: #fff !important;
+}
+html,
+body,
+#app{
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 * {

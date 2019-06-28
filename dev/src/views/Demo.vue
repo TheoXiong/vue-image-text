@@ -2,7 +2,7 @@
   <div class="flex-c demo">
     <div class="title"><span>Live Demo</span></div>
     <div class="container">
-      <vue-image-text 
+      <vue-image-text
         ref="imageText"
         :defaultFontSize="defaultFontSize"
         :theme="theme"
@@ -30,7 +30,7 @@ import DemoControl from '@/components/tools/DemoControl.vue'
 
 export default {
   name: 'Demo',
-  data() {
+  data () {
     return {
       defaultFontSize: 40,
       theme: 'light',

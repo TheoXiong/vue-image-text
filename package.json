@@ -5,8 +5,9 @@
   "main": "dist/index.min.js",
   "scripts": {
     "dev": "node_modules/.bin/webpack-dev-server --config ./build/webpack.dev.conf.js --open --hot",
-    "build:dev": "webpack -p --hide-modules --config ./build/webpack.dev.conf.js",
-    "build": "webpack -p --hide-modules --config ./build/webpack.prod.conf.js"
+    "build": "webpack -p --hide-modules --config ./build/webpack.prod.conf.js",
+    "build:server": "webpack -p --hide-modules --config ./build/webpack.server.conf.js",
+    "server": "node dev/server/server.js"
   },
   "author": "TheoXiong",
   "license": "MIT",
@@ -26,6 +27,7 @@
     "cross-env": "^5.1.6",
     "css-loader": "^0.28.11",
     "element-ui": "^2.8.2",
+    "express": "^4.17.1",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "0.4.0",
@@ -41,6 +43,7 @@
     "vue-loader": "^15.6.2",
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.16",
+    "vuescroll": "^4.13.0",
     "webpack": "^4.29.4",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4",

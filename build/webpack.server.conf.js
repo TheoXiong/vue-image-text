@@ -5,7 +5,7 @@ const baseWebpackConfig = require('./webpack.base.conf')
 module.exports = merge(baseWebpackConfig, {
   entry: path.resolve(__dirname, '../dev/src/index.js'),
   output: {
-    path: path.resolve(__dirname, '../dev/dist'),
+    path: path.resolve(__dirname, '../dev/server/dist'),
     publicPath: 'dist/',
     libraryTarget: 'umd',
     umdNamedDefine: true,

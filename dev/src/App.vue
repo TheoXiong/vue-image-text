@@ -11,7 +11,7 @@ export default {
   name: 'App',
   methods: {
   },
-  components: { Home } 
+  components: { Home }
 }
 </script>
 

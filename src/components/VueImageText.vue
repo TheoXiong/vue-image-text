@@ -1,45 +1,44 @@
 <template>
   <div
     class="imgae-text"
-    ref="wrapper"
     @dragstart="dragStart"
     @drag="drag"
     @dragend="dragEnd"
     :class="{'imgae-text-light':effect==='light', 'imgae-text-dark':effect==='dark'}"
   >
     <transition>
-      <div v-if="toolbar" class="tool-box" :class="{'tool-box-light':effect==='light', 'tool-box-dark':effect==='dark'}">
+      <div v-if="toolbar" class="tool-box v-flex-c" :class="{'tool-box-light':effect==='light', 'tool-box-dark':effect==='dark'}">
         <div class="tool-box-add" :class="{'divider-r-light':effect==='light', 'divider-r-dark':effect==='dark'}">
           <vue-button @click="addText" type="text" :disabled="isExceed" :light="effect==='dark'"><i class="iconfont icontext"></i></vue-button>
         </div>
-        <div class="tool-box-bold tool-box-style">
+        <div class="tool-box-bold tool-box-style v-flex-dir-column-c">
           <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Bold</span>
           <vue-button @click="style.isBold = !style.isBold" :activated="style.isBold" :light="effect==='dark'" type="text" class="bt-style">
             <i class="iconfont iconbold tool-box-icon"></i>
           </vue-button>
         </div>
-        <div class="tool-box-italic tool-box-style">
+        <div class="tool-box-italic tool-box-style v-flex-dir-column-c">
           <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Italic</span>
           <vue-button @click="style.isItalic = !style.isItalic" :activated="style.isItalic" :light="effect==='dark'" type="text" class="bt-style">
             <i class="iconfont iconitalic tool-box-icon"></i>
           </vue-button>
         </div>
-        <div class="tool-box-color tool-box-style">
+        <div class="tool-box-color tool-box-style v-flex-dir-column-c">
           <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Color</span>
-          <div class="tool-box-select-color">
+          <div class="tool-box-select-color v-flex-c">
             <el-color-picker v-model="style.color" show-alpha :predefine="colors" size="mini" class="v-color-picker"></el-color-picker>
           </div>
         </div>
-        <div class="tool-box-size tool-box-style">
+        <div class="tool-box-size tool-box-style v-flex-dir-column-c">
           <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Size</span>
           <div class="tool-box-range">
             <el-slider v-model="style.fontSize" :min="minFontSize" :max="maxFontSize" class="v-slider-wrap"></el-slider>
           <!-- <span class="tool-box-range-value" :class="{'value-light':effect==='light', 'value-dark':effect==='dark'}">{{ style.fontSize }}</span> -->
           </div>
         </div>
-        <div class="tool-box-family tool-box-style">
+        <div class="tool-box-family tool-box-style v-flex-dir-column-c">
           <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Font Family</span>
-          <div class="tool-box-select-family">
+          <div class="tool-box-select-family v-flex-c">
             <el-select v-model="style.fontFamily" placeholder="Select" size="mini" class="v-family-select">
               <el-option
                 v-for="family in familys"
@@ -57,48 +56,55 @@
             </el-select>
           </div>
         </div>
-        <div class="tool-box-clear tool-box-operate" :class="{'divider-l-light':effect==='light', 'divider-l-dark':effect==='dark'}">
-          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Clear</span>
-          <vue-button @click="clearText" :light="effect==='dark'" type="text"><i class="iconfont icondelete tool-box-clear-icon"></i></vue-button>
+        <div class="tool-box-clear tool-box-operate v-flex-dir-column-c" :class="{'divider-l-light':effect==='light', 'divider-l-dark':effect==='dark'}">
+          <span class="tool-box-tip" :class="{'tip-light':effect==='light', 'tip-dark':effect==='dark'}">Delete</span>
+          <vue-button @click="deleteText" :light="effect==='dark'" type="text"><i class="iconfont icondelete tool-box-clear-icon"></i></vue-button>
         </div>
       </div>
     </transition>
-    <canvas id="canvas" @click="onClickCanvas($event)"></canvas>
-    <transition-group :name="transitionName">
-      <div
-        class="text-input-wrap"
-        draggable="true"
-        v-for="item in texts"
-        :key="item.key"
-        :class="{
-          active: item.isActive || selectedText === item.key,
-          empty: !item.value && !item.isActive,
-          editing: item.editing
-        }"
-        :id="wrapPrefix + item.key"
-      >
-        <input
-          v-model="item.value"
-          @dblclick.stop.prevent="onDblclick(item)"
-          @input="onInput(item)"
-          @focus="onFocus(item)"
-          @blur="onBlur(item)"
-          @keyup.esc="onEsc(item)"
-          @keyup.delete="onDelete(item)"
-          :id="item.key"
-          :readonly="!item.editing"
-          :style="{
-            color: item.color,
-            fontSize: item.fontSize + 'px',
-            fontWeight: item.isBold ? '600' : '400',
-            fontStyle: item.isItalic ? 'italic' : 'normal',
-            fontFamily: item.fontFamily + ', Arial'
+    <div class="imgae-text-wrap" ref="wrapper">
+      <canvas id="canvas" @click="onClickCanvas($event)"></canvas>
+      <transition-group :name="transitionName">
+        <div
+          class="text-input-wrap"
+          draggable="true"
+          v-for="item in texts"
+          :key="item.key"
+          :class="{
+            active: item.isActive || selectedText === item.key,
+            empty: !item.value && !item.isActive,
+            editing: item.editing
           }"
-          class="text-input"
-          ref="textInput"
+          :style="{
+            top: item.top + 'px',
+            left: item.left + 'px'
+          }"
+          :id="wrapPrefix + item.key"
         >
-      </div>
-    </transition-group>
+          <input
+            v-model="item.value"
+            :placeholder="placeholder"
+            @dblclick.stop.prevent="onDblclick(item)"
+            @input="onInput(item)"
+            @focus="onFocus(item)"
+            @blur="onBlur(item)"
+            @keyup.esc="onEsc(item)"
+            @keyup.delete="onDelete(item)"
+            :id="item.key"
+            :readonly="!item.editing"
+            :style="{
+              color: item.color,
+              fontSize: item.fontSize + 'px',
+              fontWeight: item.isBold ? '600' : '400',
+              fontStyle: item.isItalic ? 'italic' : 'normal',
+              fontFamily: item.fontFamily + ', Arial'
+            }"
+            class="text-input"
+            ref="textInput"
+          >
+        </div>
+      </transition-group>
+    </div>
   </div>
 </template>
 
@@ -106,6 +112,7 @@
 import VueButton from './VueButton.vue'
 import '../assets/iconfont/iconfont.css'
 import '../assets/css/transition.css'
+import '../assets/css/flex.css'
 import { VALID_THEME, VALID_ANIMATION, COLORS, FONT_FAMILY } from '../utils/consts.js'
 import Vue from 'vue'
 import { ColorPicker, Slider, Select } from 'element-ui'
@@ -152,7 +159,8 @@ export default {
       validator: value => { return VALID_THEME.includes(value) }
     },
     toolbar: { type: Boolean, default: true },
-    defaultText: { type: String, default: 'Text' },
+    placeholder: { type: String, default: 'Text' },
+    defaultText: { type: String, default: '' },
     minFontSize: {
       type: Number,
       default: 12,
@@ -338,7 +346,7 @@ export default {
       }
     },
     initCanvas () {
-      this.wrapper = this.$refs.wrapper || document.querySelector('.imgae-text') || {}
+      this.wrapper = this.$refs.wrapper || document.querySelector('.imgae-text-wrap') || {}
       this.canvas = document.getElementById('canvas')
       this.ctx = this.canvas.getContext('2d')
     },
@@ -388,13 +396,20 @@ export default {
     mergeOptions (textItem, options) {
       if (!(options && typeof options === 'object')) return
       textItem.value = typeof options.value === 'string' ? options.value : textItem.value
-      textItem.x = typeof options.x === 'number' ? options.x : textItem.x
-      textItem.y = typeof options.y === 'number' ? options.y : textItem.y
       textItem.isBold = typeof options.isBold === 'boolean' ? options.isBold : textItem.isBold
       textItem.isItalic = typeof options.isItalic === 'boolean' ? options.isItalic : textItem.isItalic
       textItem.fontSize = typeof options.fontSize === 'number' ? options.fontSize : textItem.fontSize
       textItem.fontFamily = typeof options.fontFamily === 'string' ? options.fontFamily : textItem.fontFamily
       textItem.color = typeof options.color === 'string' ? options.color : textItem.color
+      if (typeof options.top === 'number' && options.top >= 0) {
+        textItem.top = options.top
+        textItem.y = options.top
+      }
+      if (typeof options.left === 'number' && options.left >= 0) {
+        textItem.left = options.left
+        let distance = (this.wrapper.offsetWidth - this.canvas.width) / 2
+        textItem.x = options.left - distance
+      }
     },
     addText (options) {
       let id = this.textId++
@@ -405,6 +420,8 @@ export default {
         editing: false,
         x: 50,
         y: 50,
+        left: 50,
+        top: 50,
         ...this.style
       }
       this.mergeOptions(textItem, options)
@@ -421,6 +438,19 @@ export default {
     },
     clearText () {
       this.texts.splice(0, this.texts.length)
+    },
+    deleteText () {
+      if (!(this.texts && this.texts.length > 0)) return
+      if (this.selectedText) {
+        let index = this.texts.findIndex(item => { return item.key === this.selectedText })
+        if (index >= 0) {
+          this.texts.splice(index, 1)
+        } else {
+          this.texts.pop()
+        }
+      } else {
+        this.texts.pop()
+      }
     },
     drawText () {
       this.texts.forEach(item => {
@@ -459,7 +489,9 @@ export default {
       if (textItem) {
         let distance = (this.wrapper.offsetWidth - this.canvas.width) / 2
         textItem.x = e.target.offsetLeft - distance
-        textItem.y = e.target.offsetTop - 64
+        textItem.y = e.target.offsetTop
+        textItem.left = e.target.offsetLeft
+        textItem.top = e.target.offsetTop
       }
     },
     refreshPosition (e) {
@@ -476,8 +508,8 @@ export default {
       } else if (offsetLeft > (this.activeArea.w - e.target.offsetWidth)) {
         offsetLeft = this.activeArea.w - e.target.offsetWidth
       }
-      if (offsetTop < 64) {
-        offsetTop = 64
+      if (offsetTop < 0) {
+        offsetTop = 0
       } else if (offsetTop > (this.activeArea.h - e.target.offsetHeight)) {
         offsetTop = this.activeArea.h - e.target.offsetHeight
       }
@@ -505,15 +537,16 @@ export default {
       index >= 0 ? this.texts.splice(index, 1) : ''
     },
     updateTextArea (textInput, textItem) {
+      let fontStyle = textItem.isItalic ? 'italic' : 'normal'
+      let fontWeight = textItem.isBold ? '600' : '400'
+      let fontFamily = textItem.fontFamily + ', Arial'
+      this.ctx.font = `${fontStyle} ${fontWeight} ${textItem.fontSize}px ${fontFamily}`
       if (textItem.value) {
-        let fontStyle = textItem.isItalic ? 'italic' : 'normal'
-        let fontWeight = textItem.isBold ? '600' : '400'
-        let fontFamily = textItem.fontFamily + ', Arial'
-        this.ctx.font = `${fontStyle} ${fontWeight} ${textItem.fontSize}px ${fontFamily}`
         let size = this.ctx.measureText(textItem.value)
-        textInput.style.width = size.width + 14 + 'px'
+        textInput.style.width = size.width + 10 + 'px'
       } else {
-        textInput.style.width = '14px'
+        let size = this.ctx.measureText(this.placeholder)
+        textInput.style.width = size.width + 10 + 'px'
       }
     },
     onDblclick (textItem) {
@@ -593,6 +626,22 @@ export default {
     getCanvas () {
       return this.canvas
     },
+    getWidth () {
+      if (this.wrapper && typeof this.wrapper.offsetWidth === 'number') {
+        return this.wrapper.offsetWidth
+      } else {
+        return null
+      }
+    },
+    measureTextWidth (text, options = {}) {
+      if (!(this.ctx && typeof this.ctx.measureText === 'function' && text)) return null
+      let fontStyle = typeof options.fontStyle === 'string' ? options.fontStyle : 'normal'
+      let fontWeight = typeof options.fontWeight === 'string' ? options.fontWeight : '400'
+      let fontFamily = typeof options.fontFamily === 'string' ? options.fontFamily : 'Arial'
+      let fontSize = typeof options.fontSize === 'number' ? options.fontSize : 16
+      this.ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`
+      return this.ctx.measureText(text)
+    },
     rerender (keepText = false) {
       return new Promise((resolve, reject) => {
         if (this.loading) return reject(new Error('Loading in progress.'))
@@ -626,6 +675,14 @@ export default {
   border: 1px solid rgba(51,51,51,0.7);
 }
 
+.imgae-text-wrap{
+  position: relative;
+  width: 100%;
+  min-width: 600px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 #canvas{
   box-sizing: border-box;
   display: block;
@@ -633,8 +690,6 @@ export default {
 }
 .text-input-wrap{
   position: absolute;
-  top: 20%;
-  left: 40%;
   display: inline-block;
   box-sizing: border-box;
   font-size: 14px;
@@ -658,18 +713,29 @@ export default {
 }
 .text-input{
   padding: 0;
+  padding-left: 4px;
   background-color: transparent;
   border: none;
   outline: none;
   -webkit-user-select: none;
   user-select: none;
 }
+.text-input::-webkit-input-placeholder{
+  color: #cccccc;
+}
+.text-input:-moz-placeholder{
+  color: #cccccc;
+}
+.text-input::-moz-placeholder{
+  color: #cccccc;
+}
+.text-input:-ms-input-placeholder{
+  color: #cccccc;
+}
 
 .tool-box{
   padding: 0 16px;
   height: 64px;
-  display: flex;
-  align-items: center;
   border-bottom: 1px solid rgba(96, 98, 102, 0.07);
 }
 .tool-box-light{
@@ -696,9 +762,6 @@ export default {
 }
 .tool-box-style, .tool-box-operate{
   margin-right: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 .tool-box-tip{
   font-size: 11px;
@@ -717,10 +780,10 @@ export default {
 .tool-box .tool-box-icon{
   font-size: 16px;
 }
-.tool-box-range, .tool-box-select-color,
-.tool-box-family .tool-box-select-family{
-  display: flex;
-  align-items: center;
+
+.tool-box-family .tool-box-select-family,
+.tool-box-select-color,
+.tool-box-range{
   height: 30px;
   padding: 0px 12px;
 }

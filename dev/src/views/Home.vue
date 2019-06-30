@@ -22,7 +22,7 @@ import { scrollTo } from 'scroll-ease-efficient'
 
 export default {
   name: 'Home',
-  data() {
+  data () {
     return {
       overBanner: true,
       showTopButton: false,
@@ -49,7 +49,7 @@ export default {
     onClick (item) {
       if (item && this.$refs && this.$refs[item.ref] && this.$refs[item.ref].$el) {
         let targetPosition = this.$refs[item.ref].$el.offsetTop - 70
-        scrollTo(this.$refs.home, targetPosition, { duration: this.scrollDuration})
+        scrollTo(this.$refs.home, targetPosition, { duration: this.scrollDuration })
       }
     },
     onScroll () {
@@ -69,10 +69,10 @@ export default {
       }
     },
     toTop () {
-      scrollTo(this.$refs.home, 0, { duration: this.scrollDuration})
+      scrollTo(this.$refs.home, 0, { duration: this.scrollDuration })
     }
   },
-  components: { NavMenu, Banner, Feature, Demo, Usage, BackTop }  
+  components: { NavMenu, Banner, Feature, Demo, Usage, BackTop }
 }
 </script>
 

@@ -32,7 +32,7 @@ export default {
   name: 'Demo',
   data () {
     return {
-      defaultFontSize: 40,
+      defaultFontSize: 32,
       theme: 'light',
       animation: 'big-big',
       toolbar: true

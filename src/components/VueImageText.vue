@@ -173,6 +173,8 @@ export default {
     },
     defaultFontSize: { type: Number, default: 20 },
     defaultTextColor: { type: String, default: '#606266' },
+    defaultTextTop: { type: Number, default: 0 },
+    defaultTextLeft: { type: Number, default: 0 },
     maxTextNum: { type: Number, default: 50 },
     maxCanvasHeight: { type: Number, default: 5000 },
     followImageWidth: { type: Boolean, default: true },
@@ -393,6 +395,21 @@ export default {
       }
       return adjustedSize
     },
+    getDefaultTextOffset () {
+      let offset = { top: 0, left: 0, x: 0, y: 0 }
+      if (this.canvas &&
+        this.canvas.width > 0 &&
+        this.canvas.height > 0 &&
+        this.defaultTextTop < this.canvas.height &&
+        this.defaultTextLeft < this.canvas.width) {
+        offset.y = this.defaultTextTop
+        offset.x = this.defaultTextLeft
+        offset.top = this.defaultTextTop
+        let distance = (this.wrapper.offsetWidth - this.canvas.width) / 2
+        offset.left = this.defaultTextLeft + distance
+      }
+      return offset
+    },
     mergeOptions (textItem, options) {
       if (!(options && typeof options === 'object')) return
       textItem.value = typeof options.value === 'string' ? options.value : textItem.value
@@ -412,16 +429,17 @@ export default {
       }
     },
     addText (options) {
+      let offset = this.getDefaultTextOffset()
       let id = this.textId++
       let textItem = {
         key: `text-input-${id}`,
         value: this.defaultText,
         isActive: false,
         editing: false,
-        x: 50,
-        y: 50,
-        left: 50,
-        top: 50,
+        x: offset.x,
+        y: offset.y,
+        left: offset.left,
+        top: offset.top,
         ...this.style
       }
       this.mergeOptions(textItem, options)
@@ -503,12 +521,12 @@ export default {
     confirmPosition (e) {
       let offsetLeft = this.itemX + e.pageX - this.mouseX
       let offsetTop = this.itemY + e.pageY - this.mouseY
-      if (offsetLeft < 0) {
+      if (offsetLeft < 0 || this.activeArea.w <= 0) {
         offsetLeft = 0
       } else if (offsetLeft > (this.activeArea.w - e.target.offsetWidth)) {
         offsetLeft = this.activeArea.w - e.target.offsetWidth
       }
-      if (offsetTop < 0) {
+      if (offsetTop < 0 || this.activeArea.h <= 0) {
         offsetTop = 0
       } else if (offsetTop > (this.activeArea.h - e.target.offsetHeight)) {
         offsetTop = this.activeArea.h - e.target.offsetHeight
@@ -607,8 +625,8 @@ export default {
           this.fillBackground()
           let blankSpace = this.canvas.width - adjustedSize.width - this.paddingLeft - this.paddingRight
           this.ctx.drawImage(image, 0, 0, image.width, image.height, (this.paddingLeft + blankSpace) / 2, this.paddingTop, adjustedSize.width, adjustedSize.height)
-          this.activeArea.w = this.wrapper.offsetWidth
-          this.activeArea.h = this.wrapper.offsetHeight
+          this.activeArea.w = this.wrapper.offsetWidth || 0
+          this.activeArea.h = this.wrapper.offsetHeight || 0
           this.imageSrc = src
           this.$nextTick(() => {
             this.loading = false

@@ -6,9 +6,11 @@
         <span class="nav-logo-text">{{ logoText }}</span>
       </div>
       <div class="nav-content flex-c">
-        <div class="nav-content-item"
+        <div
+          class="nav-content-item"
           v-for="item in value"
           :key="item.key"
+          :class="{'is-activated': activated === item.key }"
           @click="onClick(item)"
         >
           {{ item.name }}
@@ -26,7 +28,8 @@ export default {
   data () {
     return {
       logoImg,
-      logoText: 'Vue Image Text'
+      logoText: 'Vue Image Text',
+      activated: ''
     }
   },
   props: {
@@ -36,12 +39,24 @@ export default {
     },
     overBanner: {
       type: Boolean,
+      default: false
+    },
+    activateFirst: {
+      type: Boolean,
       default: true
+    }
+  },
+  mounted () {
+    if (this.activateFirst && this.value && this.value.length > 0) {
+      this.activated = this.value[0].key
     }
   },
   methods: {
     onClick (item) {
-      this.$emit('click', item)
+      if (item && item.key) {
+        this.activated = item.key
+        this.$emit('click', item)
+      }
     }
   }
 }
@@ -64,7 +79,7 @@ export default {
 }
 .is-not-overbanner{
   background-color: rgba(68, 209, 209, 0.75);
-} 
+}
 
 .nav-menu-wrap{
   height: 100%;
@@ -81,13 +96,22 @@ export default {
   color: #fff;
   font-weight: 600;
 }
+
 .nav-content-item{
-  margin: 0 12px;
-  font-size: 14px;
+  margin: 0 14px;
+  padding: 4px 0;
+  font-size: 16px;
+  font-weight: 600;
   color: #fff;
   cursor: pointer;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  box-sizing: border-box;
 }
 .nav-content-item:hover{
   color: #e0d5d5;
+}
+.nav-content-item.is-activated{
+  border-bottom: 2px solid rgba(7, 184, 184, 0.747);
 }
 </style>

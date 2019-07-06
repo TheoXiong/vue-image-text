@@ -79,15 +79,16 @@ export default {
 
 <style scoped>
 .demo{
+  width: 100%;
+  height: 100%;
+  padding-top: 70px;
+  box-sizing: border-box;
   position: relative;
   flex-direction: column;
   background-color: #fff;
-  border-bottom: 1px solid #eee;
-  padding: 10px;
-  box-sizing: border-box;
 }
 .title{
-  margin: 64px 0 40px;
+  margin: 10px 0px 40px;
   padding: 10px 0;
   font-size: 24px;
   color: #303133;

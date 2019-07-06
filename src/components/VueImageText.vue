@@ -586,13 +586,13 @@ export default {
       }
       textItem.textHeight = textInput.offsetHeight || 0
     },
-    updateStyle (textItem) {
-      if (!(textItem && typeof textItem === 'object')) return
-      this.style.isBold = typeof textItem.isBold === 'boolean' ? textItem.isBold : this.style.isBold
-      this.style.isItalic = typeof textItem.isItalic === 'boolean' ? textItem.isItalic : this.style.isItalic
-      this.style.fontSize = typeof textItem.fontSize === 'number' ? textItem.fontSize : this.style.fontSize
-      this.style.fontFamily = typeof textItem.fontFamily === 'string' ? textItem.fontFamily : this.style.fontFamily
-      this.style.color = typeof textItem.color === 'string' ? textItem.color : this.style.color
+    updateStyle (style) {
+      if (!(style && typeof style === 'object')) return
+      this.style.isBold = typeof style.isBold === 'boolean' ? style.isBold : this.style.isBold
+      this.style.isItalic = typeof style.isItalic === 'boolean' ? style.isItalic : this.style.isItalic
+      this.style.fontSize = typeof style.fontSize === 'number' ? style.fontSize : this.style.fontSize
+      this.style.fontFamily = typeof style.fontFamily === 'string' ? style.fontFamily : this.style.fontFamily
+      this.style.color = typeof style.color === 'string' ? style.color : this.style.color
     },
     onDblclick (textItem) {
       textItem.editing = true

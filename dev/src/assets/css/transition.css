@@ -6,16 +6,16 @@
 
 
 /* enter from left, and leave from left */
-.left-left-enter-active,
-.left-left-leave-active{
+.dev-left-left-enter-active,
+.dev-left-left-leave-active{
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.left-left-enter,
-.left-left-leave-to{
+.dev-left-left-enter,
+.dev-left-left-leave-to{
     transform: translateX(-100%);
     -webkit-transform: translateX(-100%);
     -moz-transform: translateX(-100%);
@@ -25,16 +25,16 @@
 }
 
 /* enter from right, and leave from right */
-.right-right-enter-active,
-.right-right-leave-active{
+.dev-right-right-enter-active,
+.dev-right-right-leave-active{
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.right-right-enter,
-.right-right-leave-to{
+.dev-right-right-enter,
+.dev-right-right-leave-to{
     transform: translateX(100%);
     -webkit-transform: translateX(100%);
     -moz-transform: translateX(100%);
@@ -44,15 +44,15 @@
 }
 
 /* enter from right, and leave from left */
-.right-left-enter-active,
-.right-left-leave-active {
+.dev-right-left-enter-active,
+.dev-right-left-leave-active {
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.right-left-enter {
+.dev-right-left-enter {
     transform: translateX(100%);
     -webkit-transform: translateX(100%);
     -moz-transform: translateX(100%);
@@ -60,7 +60,7 @@
     -o-transform: translateX(100%);
     opacity: 0;
 }
-.right-left-leave-to {
+.dev-right-left-leave-to {
     transform: translateX(-100%);
     -webkit-transform: translateX(-100%);
     -moz-transform: translateX(-100%);
@@ -69,16 +69,42 @@
     opacity: 0;
 }
 
-/* enter from left, and leave from right, the range is half part of target width */
-.left-right-half-enter-active,
-.left-right-half-leave-active {
+/* enter from left, and leave from right */
+.dev-left-right-enter-active,
+.dev-left-right-leave-active {
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.left-right-half-enter {
+.dev-left-right-enter {
+    transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -o-transform: translateX(-100%);
+    opacity: 0;
+}
+.dev-left-right-leave-to {
+    transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
+    opacity: 0;
+}
+
+/* enter from left, and leave from right, the range is half part of target width */
+.dev-left-right-half-enter-active,
+.dev-left-right-half-leave-active {
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    opacity: 1;
+}
+.dev-left-right-half-enter {
     transform: translateX(-50%);
     -webkit-transform: translateX(-50%);
     -moz-transform: translateX(-50%);
@@ -86,7 +112,7 @@
     -o-transform: translateX(-50%);
     opacity: 0;
 }
-.left-right-half-leave-to {
+.dev-left-right-half-leave-to {
     transform: translateX(50%);
     -webkit-transform: translateX(50%);
     -moz-transform: translateX(50%);
@@ -96,15 +122,15 @@
 }
 
 /* enter from top, and leave from bottom, used for group */
-.top-bottom-enter-active,
-.top-bottom-leave-active {
+.dev-top-bottom-enter-active,
+.dev-top-bottom-leave-active {
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.top-bottom-enter {
+.dev-top-bottom-enter {
     opacity: 0;
     transform: translateY(-100%);
     -webkit-transform: translateY(-100%);
@@ -112,7 +138,7 @@
     -ms-transform: translateY(-100%);
     -o-transform: translateY(-100%);
 }
-.top-bottom-leave-to {
+.dev-top-bottom-leave-to {
     opacity: 0;
     transform: translateY(100%);
     -webkit-transform: translateY(100%);
@@ -120,7 +146,7 @@
     -ms-transform: translateY(100%);
     -o-transform: translateY(100%);
 }
-.top-bottom-move{
+.dev-top-bottom-move{
     transition: transform 0.5s;
     -webkit-transition: -webkit-transform 0.5s;
     -moz-transition: -moz-transform 0.5s;
@@ -128,16 +154,16 @@
 }
 
 /* enter from top, and leave from top */
-.top-top-enter-active,
-.top-top-leave-active {
+.dev-top-top-enter-active,
+.dev-top-top-leave-active {
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.top-top-enter,
-.top-top-leave-to{
+.dev-top-top-enter,
+.dev-top-top-leave-to{
     opacity: 0;
     transform: translateY(-100%);
     -webkit-transform: translateY(-100%);
@@ -147,16 +173,16 @@
 }
 
 /* enter from bottom, and leave from bottom */
-.bottom-bottom-enter-active,
-.bottom-bottom-leave-active {
+.dev-bottom-bottom-enter-active,
+.dev-bottom-bottom-leave-active {
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     opacity: 1;
 }
-.bottom-bottom-enter,
-.bottom-bottom-leave-to{
+.dev-bottom-bottom-enter,
+.dev-bottom-bottom-leave-to{
     opacity: 0;
     transform: translateY(100%);
     -webkit-transform: translateY(100%);

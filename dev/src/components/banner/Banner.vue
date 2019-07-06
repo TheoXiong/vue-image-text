@@ -20,7 +20,7 @@
 <script>
 export default {
   name: 'Banner',
-  data() {
+  data () {
     return {
       title: 'Vue Image Text',
       desc: 'A vue component of adding text to image'
@@ -40,7 +40,7 @@ export default {
   top: 0;
   height: 500px;
   width: 100%;
-  min-width: 1400px;
+  min-width: 1000px;
   line-height: 1.5;
   background-color: #44D1D1;
 }

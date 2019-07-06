@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import router from './router'
 
 import '@/assets/css/global.css'
 import '@/assets/css/transition.css'
@@ -17,5 +18,6 @@ Vue.use(VueImageText)
 // eslint-disable-next-line no-new
 new Vue({
   el: '#app',
+  router,
   render: h => h(App)
 })

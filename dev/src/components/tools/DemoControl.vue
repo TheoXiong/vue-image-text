@@ -34,7 +34,7 @@
           <div><span class="control-item-label">Toolbar</span></div>
         </el-tooltip>
         <div><el-switch v-model="toolbar" @change="onToggleToolbar"></el-switch></div>
-        <transition name="right-right">
+        <transition name="dev-right-right">
           <div v-if="!toolbar" class="control-add">
             <el-button type="primary" size="mini" icon="el-icon-circle-plus" @click="onAddText"></el-button>
           </div>

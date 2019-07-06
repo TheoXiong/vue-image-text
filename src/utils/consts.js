@@ -5,7 +5,6 @@ const FONT_FAMILY = [
   { label: 'Arial', value: 'Arial' },
   { label: 'Serif', value: 'serif' },
   { label: 'Helvetica', value: 'Helvetica, Helvetica Neue' },
-  { label: 'YaHei', value: 'Microsoft YaHei, 微软雅黑, STXihei, 华文细黑' },
   { label: 'Monospace', value: 'monospace, Courier' },
   { label: 'Brush MT', value: 'Brush Script MT' },
   { label: 'Lucida', value: 'Lucida Handwriting' },

@@ -5,10 +5,11 @@
       <vue-image-text
         ref="imageText"
         :defaultFontSize="defaultFontSize"
+        :textPaddingLeft="textPaddingLeft"
         :theme="theme"
         :animation="animation"
         :toolbar="toolbar"
-        defaultText="Hello World"
+        defaultText="Hello"
         defaultTextColor="#CA17E1"
       >
       </vue-image-text>
@@ -18,6 +19,7 @@
         @animation-change="onAnimationChange"
         @toolbar-change="onToggleToolbar"
         @add-text="onAddText"
+        @download="onDownload"
       >
       </demo-control>
     </div>
@@ -33,6 +35,7 @@ export default {
   data () {
     return {
       defaultFontSize: 32,
+      textPaddingLeft: 4,
       theme: 'light',
       animation: 'big-big',
       toolbar: true
@@ -62,6 +65,11 @@ export default {
           value: 'External',
           color: 'rgb(234,67,135)'
         })
+      }
+    },
+    onDownload () {
+      if (this.$refs && this.$refs.imageText && typeof this.$refs.imageText.download === 'function') {
+        this.$refs.imageText.download()
       }
     }
   },

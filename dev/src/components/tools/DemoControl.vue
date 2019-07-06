@@ -19,12 +19,13 @@
         </el-tooltip>
         <div>
           <el-select v-model="animation" size="mini" placeholder="select" @change="onAnimationChange">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </div>
       </div>
@@ -41,13 +42,19 @@
       </div>
     </div>
     <el-divider></el-divider>
+    <div></div>
+    <el-divider content-position="center">Operations</el-divider>
+    <div>
+      <el-button type="primary" size="mini" icon="el-icon-download" @click="onDownload"></el-button>
+    </div>
+    <el-divider></el-divider>
   </div>
 </template>
 
 <script>
 export default {
   name: 'DemoControl',
-  data() {
+  data () {
     return {
       toolbar: true,
       theme: 'light',
@@ -94,6 +101,9 @@ export default {
     },
     onAddText () {
       this.$emit('add-text')
+    },
+    onDownload () {
+      this.$emit('download')
     }
   }
 }

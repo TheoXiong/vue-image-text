@@ -97,7 +97,8 @@
               fontSize: item.fontSize + 'px',
               fontWeight: item.isBold ? '600' : '400',
               fontStyle: item.isItalic ? 'italic' : 'normal',
-              fontFamily: item.fontFamily + ', Arial'
+              fontFamily: item.fontFamily + ', Arial',
+              paddingLeft: inputPaddingLeft + 'px'
             }"
             class="text-input"
             ref="textInput"
@@ -105,6 +106,7 @@
         </div>
       </transition-group>
     </div>
+    <a class="img-dl" :href="downloadLink" :download="imageName" ref="downloader"></a>
   </div>
 </template>
 
@@ -133,6 +135,8 @@ export default {
       ctx: null,
       loading: false,
       imageSrc: '',
+      imageName: '',
+      downloadLink: '',
       isDraging: false,
       mouseX: 0,
       mouseY: 0,
@@ -160,7 +164,6 @@ export default {
     },
     toolbar: { type: Boolean, default: true },
     placeholder: { type: String, default: 'Text' },
-    defaultText: { type: String, default: '' },
     minFontSize: {
       type: Number,
       default: 12,
@@ -172,9 +175,11 @@ export default {
       validator: value => { return (value >= 24) && (value <= 72) && ((value | 0) === value) }
     },
     defaultFontSize: { type: Number, default: 20 },
+    defaultText: { type: String, default: '' },
     defaultTextColor: { type: String, default: '#606266' },
     defaultTextTop: { type: Number, default: 0 },
     defaultTextLeft: { type: Number, default: 0 },
+    textPaddingLeft: { type: Number, default: 0 },
     maxTextNum: { type: Number, default: 50 },
     maxCanvasHeight: { type: Number, default: 5000 },
     followImageWidth: { type: Boolean, default: true },
@@ -199,6 +204,13 @@ export default {
     },
     effect () {
       return VALID_THEME.includes(this.theme) ? this.theme : VALID_THEME[0]
+    },
+    inputPaddingLeft () {
+      if (typeof this.textPaddingLeft === 'number' && this.textPaddingLeft >= 0 && this.textPaddingLeft <= 20) {
+        return this.textPaddingLeft
+      } else {
+        return 0
+      }
     }
   },
   watch: {
@@ -244,6 +256,8 @@ export default {
       this.textId = 0
       this.texts.splice(0, this.texts.length)
       this.imageSrc = ''
+      this.imageName = ''
+      this.downloadLink = ''
     },
     initTextStyle () {
       this.style.fontSize = this.defaultFontSize
@@ -479,7 +493,11 @@ export default {
           this.ctx.font = `${fontStyle} ${fontWeight} ${item.fontSize}px ${fontFamily}`
           this.ctx.fillStyle = item.color
           this.ctx.textBaseline = 'top'
-          this.ctx.fillText(item.value, item.x, item.y)
+          let verticalSpacing = 1
+          if (item.textHeight >= item.fontSize) {
+            verticalSpacing = (item.textHeight - item.fontSize) / 2 + 1
+          }
+          this.ctx.fillText(item.value, item.x + this.inputPaddingLeft, item.y + verticalSpacing)
         }
       })
     },
@@ -513,14 +531,14 @@ export default {
       }
     },
     refreshPosition (e) {
-      this.mouseX = e.pageX
-      this.mouseY = e.pageY
+      this.mouseX = e.clientX
+      this.mouseY = e.clientY
       this.itemX = e.target.offsetLeft
       this.itemY = e.target.offsetTop
     },
     confirmPosition (e) {
-      let offsetLeft = this.itemX + e.pageX - this.mouseX
-      let offsetTop = this.itemY + e.pageY - this.mouseY
+      let offsetLeft = this.itemX + e.clientX - this.mouseX
+      let offsetTop = this.itemY + e.clientY - this.mouseY
       if (offsetLeft < 0 || this.activeArea.w <= 0) {
         offsetLeft = 0
       } else if (offsetLeft > (this.activeArea.w - e.target.offsetWidth)) {
@@ -566,6 +584,15 @@ export default {
         let size = this.ctx.measureText(this.placeholder)
         textInput.style.width = size.width + 10 + 'px'
       }
+      textItem.textHeight = textInput.offsetHeight || 0
+    },
+    updateStyle (textItem) {
+      if (!(textItem && typeof textItem === 'object')) return
+      this.style.isBold = typeof textItem.isBold === 'boolean' ? textItem.isBold : this.style.isBold
+      this.style.isItalic = typeof textItem.isItalic === 'boolean' ? textItem.isItalic : this.style.isItalic
+      this.style.fontSize = typeof textItem.fontSize === 'number' ? textItem.fontSize : this.style.fontSize
+      this.style.fontFamily = typeof textItem.fontFamily === 'string' ? textItem.fontFamily : this.style.fontFamily
+      this.style.color = typeof textItem.color === 'string' ? textItem.color : this.style.color
     },
     onDblclick (textItem) {
       textItem.editing = true
@@ -584,6 +611,7 @@ export default {
     onFocus (textItem) {
       textItem.isActive = true
       this.selectedText = textItem.key
+      this.updateStyle(textItem)
     },
     onBlur (textItem) {
       textItem.isActive = false
@@ -611,7 +639,7 @@ export default {
         this.updateTextArea(textInput, textItem)
       }
     },
-    show (src) {
+    show (src, name = 'download.png') {
       return new Promise((resolve, reject) => {
         if (!(typeof src === 'string' && src)) return reject(new Error('Invalid param.'))
         if (this.loading) return reject(new Error('Loading in progress.'))
@@ -628,6 +656,7 @@ export default {
           this.activeArea.w = this.wrapper.offsetWidth || 0
           this.activeArea.h = this.wrapper.offsetHeight || 0
           this.imageSrc = src
+          this.imageName = (name && typeof name === 'string') ? name : 'download.png'
           this.$nextTick(() => {
             this.loading = false
             resolve()
@@ -636,7 +665,7 @@ export default {
         image.src = src
       })
     },
-    getDataURL (type) {
+    getDataURL (type = 'png') {
       if (!(this.canvas && this.ctx)) throw new Error('The canvas is invalid.')
       this.drawText()
       return this.canvas.toDataURL(`image/${type}`, 1)
@@ -671,6 +700,14 @@ export default {
           })
           .catch(err => { return reject(err) })
       })
+    },
+    download (isRerender = true) {
+      if (this.$refs && this.$refs.downloader) {
+        this.downloadLink = this.getDataURL()
+        isRerender ? this.rerender(true) : this.clearText()
+        this.imageName = this.imageName || 'download.png'
+        setTimeout(() => { this.$refs.downloader.click() }, 100)
+      }
     }
   },
   components: { VueButton }
@@ -731,7 +768,6 @@ export default {
 }
 .text-input{
   padding: 0;
-  padding-left: 4px;
   background-color: transparent;
   border: none;
   outline: none;
@@ -841,6 +877,12 @@ export default {
 .tool-box .bt-style{
   padding-top: 7px;
   padding-bottom: 7px;
+}
+
+.img-dl{
+  height: 0;
+  width: 0;
+  visibility: hidden;
 }
 </style>
 
